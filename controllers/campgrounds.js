@@ -1,7 +1,7 @@
 const Campground = require('../models/campground');
-const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
-const mapBoxToken = process.env.MAPBOX_TOKEN;
-const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
+// const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
+// const mapBoxToken = process.env.MAPBOX_TOKEN;
+// const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
 const { cloudinary } = require("../cloudinary");
 const ExpressError = require('../utils/ExpressError');
 
@@ -16,16 +16,20 @@ module.exports.renderNewForm = (req, res) => {
 }
 
 module.exports.createCampground = async (req, res, next) => {
-    const geoData = await geocoder.forwardGeocode({
-        query: req.body.campground.location,
-        limit: 1
-    }).send()
-    if (!geoData) {
-        throw new ExpressError("Not found any location match your input, retry!", 422 )
-    }
+    // const geoData = await geocoder.forwardGeocode({
+    //     query: req.body.campground.location,
+    //     limit: 1
+    // }).send()
+    // if (!geoData) {
+    //     throw new ExpressError("Not found any location match your input, retry!", 422 )
+    // }
 
     const campground = new Campground(req.body.campground);
-    campground.geometry = geoData.body.features[0].geometry;
+    //campground.geometry = geoData.body.features[0].geometry;
+    // campground.geometry =  {
+    //     type: 'Point',
+    //     coordinates: [40.730610, -73.935242] // Example coordinates for New York City
+    // }
     campground.images = req.files.map(f => ({ url: f.path, filename: f.filename })); // req.files is created for us by multer
     campground.author = req.user._id;
     await campground.save();
